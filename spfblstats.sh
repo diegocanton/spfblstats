@@ -30,7 +30,7 @@ case $1 in
 	LOGTEMPDNS=/tmp/spfblstatsdns
 
 	verificaLogFile(){
-		if [[ "$LOGFILE" does not exist ]]; then
+		if [[ ! -f "$LOGFILE" ]]; then
 			echo "The file $LOGFILE was not found in your system!";
 			exit 1
 		fi
