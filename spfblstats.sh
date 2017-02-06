@@ -48,6 +48,8 @@ case $1 in
 	TIMEOUT=$(grep -c TIMEOUT "$LOGTEMP")
 
 	TOTALES=$(echo $WHITE + $BLOCKED + $FLAG + $HOLD + $NXDOMAIN + $NXSENDER + $PASS + $TIMEOUT + $NONE + $SOFTFAIL + $NEUTRAL + $INTERRUPTED + $SPAMTRAP + $INEXISTENT + $INVALID + $FAIL | bc)
+	BLOCKTOTAL=$( echo $BLOCKED + $FLAG + $HOLD + $NXDOMAIN + $NXSENDER + $TIMEOUT + $NONE + $SOFTFAIL + $NEUTRAL + $INTERRUPTED + $SPAMTRAP + $INEXISTENT + $INVALID + $FAIL | bc)
+	ACCEPTTOTAL=$( $WHITE + $PASS | bc)
 
 	GREYLIST=$(grep -c GREYLIST "$LOGTEMP")
 	LISTED=$(grep -c LISTED "$LOGTEMP")
@@ -78,6 +80,8 @@ case $1 in
 	echo 'INEXISTENT:' $(echo "scale=0;($INEXISTENT*100) / $TOTALES" | bc)'% - '"$INEXISTENT"
 	echo '   TIMEOUT:' $(echo "scale=0;($TIMEOUT*100) / $TOTALES" | bc)'% - '"$TIMEOUT"
 	echo '  ----------------------'
+	echo '   ALL BLOCKED:' $(echo "scale=0;($BLOCKTOTAL*100) / $TOTALES" | bc)'% - '"$BLOCKTOTAL"
+	echo '   ALL ACCEPTED:' $(echo "scale=0;($ACCEPTTOTAL*100) / $TOTALES" | bc)'% - '"$ACCEPTTOTAL"
 	echo '     TOTAL:' $(echo "scale=0;($TOTALES*100) / $TOTALES" | bc)'% - '"$TOTALES"
 	echo '=========================='
 	echo ''
