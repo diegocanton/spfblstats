@@ -58,7 +58,7 @@ case $1 in
 	TOTALEST=$(echo $LISTED + $GREYLIST | bc)
 	
 	DNSBLBLOCK=$(echo egrep -c "TXT .* => 86400 http://" "$LOGPATH")
-	DNSBLOK=$(echo egrep "A .* => 3600 NXDOMAIN")
+	DNSBLOK=$(echo egrep -c "A .* => 3600 NXDOMAIN")
 	TOTALESDNSBL=$(echo $DNSBLBLOCK + $DNSBLOK | bc)
 
 	clear
@@ -113,9 +113,6 @@ case $1 in
 	echo '    BLOCK: ' $(echo "scale=0; ($DNSBLBLOCK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLBLOCK"
 	echo '    TOTAL:' $(echo "scale=0;($TOTALESDNSBL*100) / $TOTALESDNSBL" | bc)'% - '"TOTALESDNSBL"
 	echo '=========================='
-	DNSBLBLOCK=$(echo egrep -c "TXT .* => 86400 http://" "$LOGPATH")
-	DNSBLOK=$(echo egrep "A .* => 3600 NXDOMAIN")
-	TOTALESDNSBL=$(echo $DNSBLBLOCK + $DNSBLOK | bc)
     ;;
 *)
 	head
