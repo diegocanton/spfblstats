@@ -1,10 +1,10 @@
 #!/bin/bash
 export PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin
-version="2.10"
+version="2.11 alfa - 2017-02-06_19:55"
 
 function head(){
 
-    echo "SPFBL v$version - by Leandro Rodrigues - leandro@spfbl.net"
+	echo "SPFBL v$version - by Leandro Rodrigues - leandro@spfbl.net"
 }
 
 case $1 in
@@ -20,102 +20,136 @@ case $1 in
 	#
 
 	if [[ $2 =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
-	    TODAY=$2
+		TODAY=$2
 	else
-	    TODAY=`date +%Y-%m-%d`
+		TODAY=`date +%Y-%m-%d`
 	fi
-	
-	LOGPATH=/var/log/spfbl/spfbl."$TODAY".log
+
+	LOGFILE=/var/log/spfbl/spfbl."$TODAY".log
 	LOGTEMP=/tmp/spfblstats
-	LOGTEMPDNS=/tmp/dnsblstats
-	
-	egrep " SPFTCP[0-9]+ SPFBL " $LOGPATH > $LOGTEMP
-	egrep " DNSUDP[0-9]+ DNSBL " $LOGPATH > $LOGTEMPDNS
+	LOGTEMPDNS=/tmp/spfblstatsdns
 
-	BLOCKED=$(grep -c BLOCKED "$LOGTEMP")
-	FAIL=$(grep -c ' FAIL' "$LOGTEMP")
-	FLAG=$(grep -c FLAG "$LOGTEMP")
-	HOLD=$(grep -c HOLD "$LOGTEMP")
-	INTERRUPTED=$(grep -c INTERRUPTED "$LOGTEMP")
-	INVALID=$(grep -c INVALID "$LOGTEMP")
-	NEUTRAL=$(grep -c NEUTRAL "$LOGTEMP")
-	NONE=$(grep -c NONE "$LOGTEMP")
-	NXDOMAIN=$(grep -c NXDOMAIN "$LOGTEMP")
-	NXSENDER=$(grep -c NXSENDER "$LOGTEMP")
-	PASS=$(grep -c PASS "$LOGTEMP")
-	WHITE=$(grep -c WHITE "$LOGTEMP")
-	SOFTFAIL=$(grep -c SOFTFAIL "$LOGTEMP")
-	SPAMTRAP=$(grep -c SPAMTRAP "$LOGTEMP")
-	INEXISTENT=$(grep -c INEXISTENT "$LOGTEMP")
-	TIMEOUT=$(grep -c TIMEOUT "$LOGTEMP")
+	verificaLogFile(){
+		if [[ "$LOGFILE" does not exist ]]; then
+			echo "The file $LOGFILE was not found in your system!";
+			exit 1
+		fi
+	}
 
-	TOTALES=$(echo $WHITE + $BLOCKED + $FLAG + $HOLD + $NXDOMAIN + $NXSENDER + $PASS + $TIMEOUT + $NONE + $SOFTFAIL + $NEUTRAL + $INTERRUPTED + $SPAMTRAP + $INEXISTENT + $INVALID + $FAIL | bc)
-	BLOCKTOTAL=$( echo $BLOCKED + $FLAG + $HOLD + $NXDOMAIN + $NXSENDER + $TIMEOUT + $NONE + $SOFTFAIL + $NEUTRAL + $INTERRUPTED + $SPAMTRAP + $INEXISTENT + $INVALID + $FAIL | bc)
-	PASSTOTAL=$( echo $WHITE + $PASS | bc)
+	verificaLogTemp(){
+		if [[ -f "$LOGTEMP" ]]; then
+			rm "$LOGTEMP"
+		fi
+	}
 
-	GREYLIST=$(grep -c GREYLIST "$LOGTEMP")
-	LISTED=$(grep -c LISTED "$LOGTEMP")
-	TOTALEST=$(echo $LISTED + $GREYLIST | bc)
-	
-	DNSBLBLOCK=$(egrep -c "TXT .* => 86400 http://" "$LOGPATH")
-	DNSBLOK=$(egrep -c "A .* => 3600 NXDOMAIN" "$LOGPATH")
-	TOTALESDNSBL=$(echo $DNSBLBLOCK + $DNSBLOK | bc)
+	verificaLogTempDns(){
+		if [[ -f "$LOGTEMPDNS" ]]; then
+			rm "$LOGTEMPDNS"
+		fi
+	}
 
-	clear
+	criaLogTemp(){
+		egrep " SPFTCP[0-9]+ SPFBL " $LOGFILE > $LOGTEMP
+		egrep " DNSUDP[0-9]+ DNSBL " $LOGFILE > $LOGTEMPDNS
+	}
 
-	echo '=========================='
-	echo '= SPFBL Daily Statistics ='
-	echo '=      '"$TODAY"'        ='
-	echo '=========================='
-	echo '=    Permanent actions   ='
-	echo '=========================='
-	echo '     WHITE:' $(echo "scale=0;($WHITE*100) / $TOTALES" | bc)'% - '"$WHITE"
-	echo '      PASS:' $(echo "scale=0;($PASS*100) / $TOTALES" | bc)'% - '"$PASS"
-	echo '   BLOCKED:' $(echo "scale=0;($BLOCKED*100) / $TOTALES" | bc)'% - '"$BLOCKED"
-	echo '      FAIL:' $(echo "scale=0;($FAIL*100) / $TOTALES" | bc)'% - '"$FAIL"
-	echo '      FLAG:' $(echo "scale=0;($FLAG*100) / $TOTALES" | bc)'% - '"$FLAG"
-	echo '      HOLD:' $(echo "scale=0;($HOLD*100) / $TOTALES" | bc)'% - '"$HOLD"
-	echo '  INTRRPTD:' $(echo "scale=0;($INTERRUPTED*100) / $TOTALES" | bc)'% - '"$INTERRUPTED"
-	echo '   INVALID:' $(echo "scale=0;($INVALID*100) / $TOTALES" | bc)'% - '"$INVALID"
-	echo '   NEUTRAL:' $(echo "scale=0;($NEUTRAL*100) / $TOTALES" | bc)'% - '"$NEUTRAL"
-	echo '      NONE:' $(echo "scale=0;($NONE*100) / $TOTALES" | bc)'% - '"$NONE"
-	echo '  NXDOMAIN:' $(echo "scale=0;($NXDOMAIN*100) / $TOTALES" | bc)'% - '"$NXDOMAIN"
-	echo '  NXSENDER:' $(echo "scale=0;($NXSENDER*100) / $TOTALES" | bc)'% - '"$NXSENDER"
-	echo '  SOFTFAIL:' $(echo "scale=0;($SOFTFAIL*100) / $TOTALES" | bc)'% - '"$SOFTFAIL"
-	echo '  SPAMTRAP:' $(echo "scale=0;($SPAMTRAP*100) / $TOTALES" | bc)'% - '"$SPAMTRAP"
-	echo 'INEXISTENT:' $(echo "scale=0;($INEXISTENT*100) / $TOTALES" | bc)'% - '"$INEXISTENT"
-	echo '   TIMEOUT:' $(echo "scale=0;($TIMEOUT*100) / $TOTALES" | bc)'% - '"$TIMEOUT"
-	echo '  ----------------------'
-	echo '   ALL BLOCKED: ' $(echo "scale=0;($BLOCKTOTAL*100) / $TOTALES" | bc)'% - '"$BLOCKTOTAL"
-	echo '   ALL ACCEPTED:' $(echo "scale=0;($PASSTOTAL*100) / $TOTALES" | bc)'% - '"$PASSTOTAL"
-	echo '     TOTAL:' $(echo "scale=0;($TOTALES*100) / $TOTALES" | bc)'% - '"$TOTALES"
-	echo '=========================='
-	echo ''
-	echo '=========================='
-	echo '=   Temporary actions    ='
-	echo '=========================='
-	echo '  GREYLIST:' $(echo "scale=0;($GREYLIST*100) / $TOTALEST" | bc)'% - '"$GREYLIST"
-	echo '    LISTED:' $(echo "scale=0;($LISTED*100) / $TOTALEST" | bc)'% - '"$LISTED"
-	echo '  ----------------------'
-	echo '     TOTAL:' $(echo "scale=0;($TOTALEST*100) / $TOTALEST" | bc)'% - '"$TOTALEST"
-	echo '=========================='
-	echo ''
-	echo '=========================='
-	echo ' Permanent: ' $(echo "scale=0; ($TOTALES*100) / ($TOTALES + $TOTALEST)" | bc)'% - '"$TOTALES"
-	echo ' Temporary: ' $(echo "scale=0; ($TOTALEST*100) / ($TOTALES + $TOTALEST)" | bc)'% - '"$TOTALEST"
-	echo '    TOTAL:' $(echo "scale=0;(($TOTALEST + $TOTALES)*100) / ($TOTALEST + $TOTALES)" | bc)'% - ' $( echo "$TOTALEST + $TOTALES" | bc)
-	echo '=========================='
-	echo ''
-	echo '=========================='
-	echo '=      DNSBL BLOCKs      ='
-	echo '=========================='
-	echo '       OK: ' $(echo "scale=0; ($DNSBLOK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLOK"
-	echo '    BLOCK: ' $(echo "scale=0; ($DNSBLBLOCK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLBLOCK"
-	echo '    TOTAL:' $(echo "scale=0;($TOTALESDNSBL*100) / $TOTALESDNSBL" | bc)'% - '"$TOTALESDNSBL"
-	echo '=========================='
-    ;;
+	executaStats(){
+		BLOCKED=$(grep -c BLOCKED "$LOGTEMP")
+		FAIL=$(grep -c ' FAIL' "$LOGTEMP")
+		FLAG=$(grep -c FLAG "$LOGTEMP")
+		HOLD=$(grep -c HOLD "$LOGTEMP")
+		INTERRUPTED=$(grep -c INTERRUPTED "$LOGTEMP")
+		INVALID=$(grep -c INVALID "$LOGTEMP")
+		NEUTRAL=$(grep -c NEUTRAL "$LOGTEMP")
+		NONE=$(grep -c NONE "$LOGTEMP")
+		NXDOMAIN=$(grep -c NXDOMAIN "$LOGTEMP")
+		NXSENDER=$(grep -c NXSENDER "$LOGTEMP")
+		PASS=$(grep -c PASS "$LOGTEMP")
+		WHITE=$(grep -c WHITE "$LOGTEMP")
+		SOFTFAIL=$(grep -c SOFTFAIL "$LOGTEMP")
+		SPAMTRAP=$(grep -c SPAMTRAP "$LOGTEMP")
+		INEXISTENT=$(grep -c INEXISTENT "$LOGTEMP")
+		TIMEOUT=$(grep -c TIMEOUT "$LOGTEMP")
+
+		TOTALES=$(echo $WHITE + $BLOCKED + $FLAG + $HOLD + $NXDOMAIN + $NXSENDER + $PASS + $TIMEOUT + $NONE + $SOFTFAIL + $NEUTRAL + $INTERRUPTED + $SPAMTRAP + $INEXISTENT + $INVALID + $FAIL | bc)
+		BLOCKTOTAL=$( echo $BLOCKED + $FLAG + $HOLD + $NXDOMAIN + $NXSENDER + $TIMEOUT + $NONE + $SOFTFAIL + $NEUTRAL + $INTERRUPTED + $SPAMTRAP + $INEXISTENT + $INVALID + $FAIL | bc)
+		PASSTOTAL=$( echo $WHITE + $PASS | bc)
+
+		GREYLIST=$(grep -c GREYLIST "$LOGTEMP")
+		LISTED=$(grep -c LISTED "$LOGTEMP")
+		TOTALEST=$(echo $LISTED + $GREYLIST | bc)
+
+		DNSBLBLOCK=$(egrep -c "TXT .* => 86400 http://" "$LOGFILE")
+		DNSBLOK=$(egrep -c "A .* => 3600 NXDOMAIN" "$LOGFILE")
+		TOTALESDNSBL=$(echo $DNSBLBLOCK + $DNSBLOK | bc)
+
+		clear
+
+		echo '=========================='
+		echo '= SPFBL Daily Statistics ='
+		echo '=      '"$TODAY"'        ='
+		echo '=========================='
+		echo '=    Permanent actions   ='
+		echo '=========================='
+		echo '     WHITE:' $(echo "scale=0;($WHITE*100) / $TOTALES" | bc)'% - '"$WHITE"
+		echo '      PASS:' $(echo "scale=0;($PASS*100) / $TOTALES" | bc)'% - '"$PASS"
+		echo '   BLOCKED:' $(echo "scale=0;($BLOCKED*100) / $TOTALES" | bc)'% - '"$BLOCKED"
+		echo '      FAIL:' $(echo "scale=0;($FAIL*100) / $TOTALES" | bc)'% - '"$FAIL"
+		echo '      FLAG:' $(echo "scale=0;($FLAG*100) / $TOTALES" | bc)'% - '"$FLAG"
+		echo '      HOLD:' $(echo "scale=0;($HOLD*100) / $TOTALES" | bc)'% - '"$HOLD"
+		echo '  INTRRPTD:' $(echo "scale=0;($INTERRUPTED*100) / $TOTALES" | bc)'% - '"$INTERRUPTED"
+		echo '   INVALID:' $(echo "scale=0;($INVALID*100) / $TOTALES" | bc)'% - '"$INVALID"
+		echo '   NEUTRAL:' $(echo "scale=0;($NEUTRAL*100) / $TOTALES" | bc)'% - '"$NEUTRAL"
+		echo '      NONE:' $(echo "scale=0;($NONE*100) / $TOTALES" | bc)'% - '"$NONE"
+		echo '  NXDOMAIN:' $(echo "scale=0;($NXDOMAIN*100) / $TOTALES" | bc)'% - '"$NXDOMAIN"
+		echo '  NXSENDER:' $(echo "scale=0;($NXSENDER*100) / $TOTALES" | bc)'% - '"$NXSENDER"
+		echo '  SOFTFAIL:' $(echo "scale=0;($SOFTFAIL*100) / $TOTALES" | bc)'% - '"$SOFTFAIL"
+		echo '  SPAMTRAP:' $(echo "scale=0;($SPAMTRAP*100) / $TOTALES" | bc)'% - '"$SPAMTRAP"
+		echo 'INEXISTENT:' $(echo "scale=0;($INEXISTENT*100) / $TOTALES" | bc)'% - '"$INEXISTENT"
+		echo '   TIMEOUT:' $(echo "scale=0;($TIMEOUT*100) / $TOTALES" | bc)'% - '"$TIMEOUT"
+		echo '  ----------------------'
+		echo '   ALL BLOCKED: ' $(echo "scale=0;($BLOCKTOTAL*100) / $TOTALES" | bc)'% - '"$BLOCKTOTAL"
+		echo '   ALL ACCEPTED:' $(echo "scale=0;($PASSTOTAL*100) / $TOTALES" | bc)'% - '"$PASSTOTAL"
+		echo '     TOTAL:' $(echo "scale=0;($TOTALES*100) / $TOTALES" | bc)'% - '"$TOTALES"
+		echo '=========================='
+		echo ''
+		echo '=========================='
+		echo '=   Temporary actions    ='
+		echo '=========================='
+		echo '  GREYLIST:' $(echo "scale=0;($GREYLIST*100) / $TOTALEST" | bc)'% - '"$GREYLIST"
+		echo '    LISTED:' $(echo "scale=0;($LISTED*100) / $TOTALEST" | bc)'% - '"$LISTED"
+		echo '  ----------------------'
+		echo '     TOTAL:' $(echo "scale=0;($TOTALEST*100) / $TOTALEST" | bc)'% - '"$TOTALEST"
+		echo '=========================='
+		echo ''
+		echo '=========================='
+		echo ' Permanent: ' $(echo "scale=0; ($TOTALES*100) / ($TOTALES + $TOTALEST)" | bc)'% - '"$TOTALES"
+		echo ' Temporary: ' $(echo "scale=0; ($TOTALEST*100) / ($TOTALES + $TOTALEST)" | bc)'% - '"$TOTALEST"
+		echo '    TOTAL:' $(echo "scale=0;(($TOTALEST + $TOTALES)*100) / ($TOTALEST + $TOTALES)" | bc)'% - ' $( echo "$TOTALEST + $TOTALES" | bc)
+		echo '=========================='
+		echo ''
+		echo '=========================='
+		echo '=      DNSBL BLOCKs      ='
+		echo '=========================='
+		echo '       OK: ' $(echo "scale=0; ($DNSBLOK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLOK"
+		echo '    BLOCK: ' $(echo "scale=0; ($DNSBLBLOCK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLBLOCK"
+		echo '    TOTAL:' $(echo "scale=0;($TOTALESDNSBL*100) / $TOTALESDNSBL" | bc)'% - '"$TOTALESDNSBL"
+		echo '=========================='
+	}
+
+	# Executa processos
+
+	verificaLogFile
+	verificaLogTemp
+	verificaLogTempDns
+	criaLogTemp
+	executaStats
+
+	# Fim processos
+
+	;;
 *)
 	head
 	printf "    $0 stats\n"
-    ;;
+	;;
 esac
