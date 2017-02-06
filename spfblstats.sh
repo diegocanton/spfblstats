@@ -34,29 +34,32 @@ case $1 in
 	    TODAY=`date +%Y-%m-%d`
 	fi
 	
-	LOGPATH=/var/log/spfbl/
+	LOGPATH=/var/log/spfbl/"$TODAY".log
+	LOGTEMP=/tmp/spfblstats
+	
+	egrep " SPFTCP[0-9]+ SPFBL " > $LOGTEMP
 
-	BLOCKED=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c BLOCKED "$LOGPATH"spfbl."$TODAY".log)
-	FAIL=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c ' FAIL' "$LOGPATH"spfbl."$TODAY".log)
-	FLAG=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c FLAG "$LOGPATH"spfbl."$TODAY".log)
-	HOLD=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c HOLD "$LOGPATH"spfbl."$TODAY".log)
-	INTERRUPTED=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c INTERRUPTED "$LOGPATH"spfbl."$TODAY".log)
-	INVALID=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c INVALID "$LOGPATH"spfbl."$TODAY".log)
-	NEUTRAL=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c NEUTRAL "$LOGPATH"spfbl."$TODAY".log)
-	NONE=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c NONE "$LOGPATH"spfbl."$TODAY".log)
-	NXDOMAIN=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c NXDOMAIN "$LOGPATH"spfbl."$TODAY".log)
-	NXSENDER=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c NXSENDER "$LOGPATH"spfbl."$TODAY".log)
-	PASS=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c PASS "$LOGPATH"spfbl."$TODAY".log)
-	WHITE=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c WHITE "$LOGPATH"spfbl."$TODAY".log)
-	SOFTFAIL=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c SOFTFAIL "$LOGPATH"spfbl."$TODAY".log)
-	SPAMTRAP=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c SPAMTRAP "$LOGPATH"spfbl."$TODAY".log)
-	INEXISTENT=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c INEXISTENT "$LOGPATH"spfbl."$TODAY".log)
-	TIMEOUT=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c TIMEOUT "$LOGPATH"spfbl."$TODAY".log)
+	BLOCKED=$(grep -c BLOCKED "$LOGTEMP")
+	FAIL=$(grep -c ' FAIL' "$LOGTEMP")
+	FLAG=$(grep -c FLAG "$LOGTEMP")
+	HOLD=$(grep -c HOLD "$LOGTEMP")
+	INTERRUPTED=$(grep -c INTERRUPTED "$LOGTEMP")
+	INVALID=$(grep -c INVALID "$LOGTEMP")
+	NEUTRAL=$(grep -c NEUTRAL "$LOGTEMP")
+	NONE=$(grep -c NONE "$LOGTEMP")
+	NXDOMAIN=$(grep -c NXDOMAIN "$LOGTEMP")
+	NXSENDER=$(grep -c NXSENDER "$LOGTEMP")
+	PASS=$(grep -c PASS "$LOGTEMP")
+	WHITE=$(grep -c WHITE "$LOGTEMP")
+	SOFTFAIL=$(grep -c SOFTFAIL "$LOGTEMP")
+	SPAMTRAP=$(grep -c SPAMTRAP "$LOGTEMP")
+	INEXISTENT=$(grep -c INEXISTENT "$LOGTEMP")
+	TIMEOUT=$(grep -c TIMEOUT "$LOGTEMP")
 
 	TOTALES=$(echo $WHITE + $BLOCKED + $FLAG + $HOLD + $NXDOMAIN + $NXSENDER + $PASS + $TIMEOUT + $NONE + $SOFTFAIL + $NEUTRAL + $INTERRUPTED + $SPAMTRAP + $INEXISTENT + $INVALID + $FAIL | bc)
 
-	GREYLIST=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c GREYLIST "$LOGPATH"spfbl."$TODAY".log)
-	LISTED=$(egrep" SPFTCP[0-9]+ SPFBL " | grep -c LISTED "$LOGPATH"spfbl."$TODAY".log)
+	GREYLIST=$(grep -c GREYLIST "$LOGTEMP")
+	LISTED=$(grep -c LISTED "$LOGTEMP")
 	TOTALEST=$(echo $LISTED + $GREYLIST | bc)
 
 	clear
