@@ -27,8 +27,10 @@ case $1 in
 	
 	LOGPATH=/var/log/spfbl/spfbl."$TODAY".log
 	LOGTEMP=/tmp/spfblstats
+	LOGTEMPDNS=/tmp/dnsblstats
 	
 	egrep " SPFTCP[0-9]+ SPFBL " $LOGPATH > $LOGTEMP
+	egrep " DNSUDP[0-9]+ DNSBL " $LOGPATH > $LOGTEMPDNS
 
 	BLOCKED=$(grep -c BLOCKED "$LOGTEMP")
 	FAIL=$(grep -c ' FAIL' "$LOGTEMP")
@@ -54,6 +56,10 @@ case $1 in
 	GREYLIST=$(grep -c GREYLIST "$LOGTEMP")
 	LISTED=$(grep -c LISTED "$LOGTEMP")
 	TOTALEST=$(echo $LISTED + $GREYLIST | bc)
+	
+	DNSBLBLOCK=$(echo egrep -c "TXT .* => 86400 http://" "$LOGPATH")
+	DNSBLOK=$(echo egrep "A .* => 3600 NXDOMAIN")
+	TOTALESDNSBL=$(echo $DNSBLBLOCK + $DNSBLOK | bc)
 
 	clear
 
@@ -93,13 +99,23 @@ case $1 in
 	echo '  ----------------------'
 	echo '     TOTAL:' $(echo "scale=0;($TOTALEST*100) / $TOTALEST" | bc)'% - '"$TOTALEST"
 	echo '=========================='
-
 	echo ''
 	echo '=========================='
 	echo ' Permanent: ' $(echo "scale=0; ($TOTALES*100) / ($TOTALES + $TOTALEST)" | bc)'% - '"$TOTALES"
 	echo ' Temporary: ' $(echo "scale=0; ($TOTALEST*100) / ($TOTALES + $TOTALEST)" | bc)'% - '"$TOTALEST"
 	echo '    TOTAL:' $(echo "scale=0;(($TOTALEST + $TOTALES)*100) / ($TOTALEST + $TOTALES)" | bc)'% - ' $( echo "$TOTALEST + $TOTALES" | bc)
 	echo '=========================='
+	echo ''
+	echo '=========================='
+	echo '=      DNSBL BLOCKs      ='
+	echo '=========================='
+	echo '       OK: ' $(echo "scale=0; ($DNSBLOK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLOK"
+	echo '    BLOCK: ' $(echo "scale=0; ($DNSBLBLOCK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLBLOCK"
+	echo '    TOTAL:' $(echo "scale=0;($TOTALESDNSBL*100) / $TOTALESDNSBL" | bc)'% - '"TOTALESDNSBL"
+	echo '=========================='
+	DNSBLBLOCK=$(echo egrep -c "TXT .* => 86400 http://" "$LOGPATH")
+	DNSBLOK=$(echo egrep "A .* => 3600 NXDOMAIN")
+	TOTALESDNSBL=$(echo $DNSBLBLOCK + $DNSBLOK | bc)
     ;;
 *)
 	head
