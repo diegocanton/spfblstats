@@ -34,10 +34,10 @@ case $1 in
 	    TODAY=`date +%Y-%m-%d`
 	fi
 	
-	LOGPATH=/var/log/spfbl/"$TODAY".log
+	LOGPATH=/var/log/spfbl/spfbl."$TODAY".log
 	LOGTEMP=/tmp/spfblstats
 	
-	egrep " SPFTCP[0-9]+ SPFBL " > $LOGTEMP
+	egrep " SPFTCP[0-9]+ SPFBL " $LOGPATH > $LOGTEMP
 
 	BLOCKED=$(grep -c BLOCKED "$LOGTEMP")
 	FAIL=$(grep -c ' FAIL' "$LOGTEMP")
