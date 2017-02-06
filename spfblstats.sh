@@ -1,6 +1,6 @@
 #!/bin/bash
 export PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin
-version="2.11 alfa - 2017-02-06_19:55"
+version="2.11 alfa - 2017-02-06_21:31"
 
 function head(){
 
