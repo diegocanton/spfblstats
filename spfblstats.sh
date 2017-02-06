@@ -57,8 +57,8 @@ case $1 in
 	LISTED=$(grep -c LISTED "$LOGTEMP")
 	TOTALEST=$(echo $LISTED + $GREYLIST | bc)
 	
-	DNSBLBLOCK=$(echo egrep -c "TXT .* => 86400 http://" "$LOGPATH")
-	DNSBLOK=$(echo egrep -c "A .* => 3600 NXDOMAIN")
+	DNSBLBLOCK=$(egrep -c "TXT .* => 86400 http://" "$LOGPATH")
+	DNSBLOK=$(egrep -c "A .* => 3600 NXDOMAIN" "$LOGPATH")
 	TOTALESDNSBL=$(echo $DNSBLBLOCK + $DNSBLOK | bc)
 
 	clear
