@@ -1,13 +1,4 @@
 #!/bin/bash
-### CONFIGURACOES ###
-IP_SERVIDOR="spfbl.ensite.com.br"
-PORTA_SERVIDOR="9877"
-PORTA_ADMIN="9875"
-OTP_SECRET=""
-DUMP_PATH="/tmp"
-QUERY_TIMEOUT="10"
-MAX_TIMEOUT="100"
-
 export PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin
 version="2.10"
 
