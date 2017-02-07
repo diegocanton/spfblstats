@@ -118,7 +118,7 @@ case $1 in
 			echo '      HOLD:' $(echo "scale=0;($HOLD*100) / $TOTALES" | bc)'% - '"$HOLD"
 		fi
 
-		if [[ $INTRRPTD != 0 ]]; then
+		if [[ $INTERRUPTED != 0 ]]; then
 			echo '  INTRRPTD:' $(echo "scale=0;($INTERRUPTED*100) / $TOTALES" | bc)'% - '"$INTERRUPTED"
 		fi
 
