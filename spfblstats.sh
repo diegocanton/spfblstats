@@ -1,6 +1,7 @@
 #!/bin/bash
+# -*- coding: utf-8 -*-
 export PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin
-version="2.11 alfa - 2017-02-07_00:30"
+version="2.11 alfa - 2017-02-07_22:33"
 
 function head(){
 
@@ -32,7 +33,7 @@ case $1 in
 	verificaLogFile(){
 		if [[ ! -f "$LOGFILE" ]]; then
 			echo "";
-			echo "The file $LOGFILE was not found in your system!";
+			echo -e "\e[41m The file $LOGFILE was not found in your system! \e[0m";
 			echo "";
 			exit 1
 		fi
@@ -161,40 +162,52 @@ case $1 in
 		echo '  ----------------------'
 		echo '   ALL BLOCKED :' $(echo "scale=0;($BLOCKTOTAL*100) / $TOTALES" | bc)'% - '"$BLOCKTOTAL"
 		echo '   ALL ACCEPTED:' $(echo "scale=0;($PASSTOTAL*100) / $TOTALES" | bc)'% - '"$PASSTOTAL"
-		echo '     TOTAL:' $(echo "scale=0;($TOTALES*100) / $TOTALES" | bc)'% - '"$TOTALES"
+		echo '   ALL =TOTAL= :' $(echo "scale=0;($TOTALES*100) / $TOTALES" | bc)'% - '"$TOTALES"
 		echo '=========================='
-		echo ''
-		echo '=========================='
-		echo '=   Temporary actions    ='
-		echo '=========================='
-		echo '  GREYLIST:' $(echo "scale=0;($GREYLIST*100) / $TOTALEST" | bc)'% - '"$GREYLIST"
-		echo '    LISTED:' $(echo "scale=0;($LISTED*100) / $TOTALEST" | bc)'% - '"$LISTED"
-		echo '  ----------------------'
-		echo '     TOTAL:' $(echo "scale=0;($TOTALEST*100) / $TOTALEST" | bc)'% - '"$TOTALEST"
-		echo '=========================='
-		echo ''
-		echo '=========================='
-		echo ' Permanent: ' $(echo "scale=0; ($TOTALES*100) / ($TOTALES + $TOTALEST)" | bc)'% - '"$TOTALES"
-		echo ' Temporary: ' $(echo "scale=0; ($TOTALEST*100) / ($TOTALES + $TOTALEST)" | bc)'% - '"$TOTALEST"
-		echo '     TOTAL: ' $(echo "scale=0;(($TOTALEST + $TOTALES)*100) / ($TOTALEST + $TOTALES)" | bc)'% - ' $( echo "$TOTALEST + $TOTALES" | bc)
-		echo '=========================='
-		echo ''
-		echo '=========================='
-		echo '=      DNSBL BLOCKs      ='
-		echo '=========================='
-		echo '       OK: ' $(echo "scale=0; ($DNSBLOK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLOK"
-		echo '    BLOCK: ' $(echo "scale=0; ($DNSBLBLOCK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLBLOCK"
-		echo '    TOTAL: ' $(echo "scale=0;($TOTALESDNSBL*100) / $TOTALESDNSBL" | bc)'% - '"$TOTALESDNSBL"
-		echo '=========================='
+	}
+
+	executaStatsExtra(){
+		if [[ $TOTALEST != 0 ]]; then
+			echo ''
+			echo '=========================='
+			echo '=   Temporary actions    ='
+			echo '=========================='
+			echo '  GREYLIST: ' $(echo "scale=0;($GREYLIST*100) / $TOTALEST" | bc)'% - '"$GREYLIST"
+			echo '    LISTED: ' $(echo "scale=0;($LISTED*100) / $TOTALEST" | bc)'% - '"$LISTED"
+			echo '  ----------------------'
+			echo '     TOTAL: ' $(echo "scale=0;($TOTALEST*100) / $TOTALEST" | bc)'% - '"$TOTALEST"
+			echo '=========================='
+			echo ''
+			echo '=========================='
+			echo ' Permanent: ' $(echo "scale=0; ($TOTALES*100) / ($TOTALES + $TOTALEST)" | bc)'% - '"$TOTALES"
+			echo ' Temporary: ' $(echo "scale=0; ($TOTALEST*100) / ($TOTALES + $TOTALEST)" | bc)'% - '"$TOTALEST"
+			echo '  =TOTAL= : ' $(echo "scale=0;(($TOTALEST + $TOTALES)*100) / ($TOTALEST + $TOTALES)" | bc)'% - ' $( echo "$TOTALEST + $TOTALES" | bc)
+			echo '=========================='
+			echo ''
+			echo '=========================='
+			echo '=      DNSBL BLOCKs      ='
+			echo '=========================='
+			echo '        OK: ' $(echo "scale=0; ($DNSBLOK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLOK"
+			echo '     BLOCK: ' $(echo "scale=0; ($DNSBLBLOCK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLBLOCK"
+			echo '     TOTAL: ' $(echo "scale=0;($TOTALESDNSBL*100) / $TOTALESDNSBL" | bc)'% - '"$TOTALESDNSBL"
+			echo '=========================='
+		else
+			echo ''
+			echo -e "\e[41m Variabile TOTALEST returned zero as value! \e[0m";
+			echo ''
+		fi
 	}
 
 	# Executa processos
 
 	verificaLogFile
-	verificaLogTemp
-	verificaLogTempDns
+	verificaLogTemp      # apaga temporarios
+	verificaLogTempDns   # apaga temporarios
 	criaLogTemp
 	executaStats
+	executaStatsExtra
+	verificaLogTemp      # apaga temporarios
+	verificaLogTempDns   # apaga temporarios
 	exit 0
 
 	# Fim processos
@@ -202,6 +215,6 @@ case $1 in
 	;;
 *)
 	head
-	printf "    $0 stats\n"
+	printf " Sintaxe: $0 stats YYYY-MM-DD\n"
 	;;
 esac
