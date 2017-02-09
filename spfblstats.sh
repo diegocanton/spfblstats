@@ -80,20 +80,6 @@ case $1 in
 		BLOCKTOTAL=$( echo $BLOCKED + $FLAG + $HOLD + $NXDOMAIN + $NXSENDER + $TIMEOUT + $NONE + $SOFTFAIL + $NEUTRAL + $INTERRUPTED + $SPAMTRAP + $INEXISTENT + $INVALID + $FAIL | bc)
 		PASSTOTAL=$( echo $WHITE + $PASS | bc)
 
-		#Calcula a quantidade e total de mensagens para resultados de checagem com ações temporarias
-		GREYLIST=$(grep -c GREYLIST "$LOGTEMP")		
-		LISTED=$(grep -c LISTED "$LOGTEMP")
-		TOTALEST=$(echo $LISTED + $GREYLIST | bc)
-
-		#Calcula a quantidade de consultas DNSBL por tipo de resposta
-		#127.0.0.2 - Rejeitada por má reputação
-		#127.0.0.3 - Rejeitada por suspeita/problemas na identificação
-		#NXDOMAIN - Aceita por não estar listada
-		DNSBLBLOCK=$(egrep -c "A .* => [0-9]+ 127.0.0.2" "$LOGFILE")
-		DNSBLSPAM=$(egrep -c "A .* => [0-9]+ 127.0.0.3" "$LOGFILE")
-		DNSBLOK=$(egrep -c "A .* => [0-9]+ NXDOMAIN" "$LOGFILE")
-		TOTALESDNSBL=$(echo $DNSBLBLOCK + $DNSBLSPAM + $DNSBLOK | bc)
-
 		clear
 
 		echo '=========================='
@@ -175,6 +161,20 @@ case $1 in
 	}
 
 	executaStatsExtra(){
+		#Calcula a quantidade e total de mensagens para resultados de checagem com ações temporarias
+		GREYLIST=$(grep -c GREYLIST "$LOGTEMP")		
+		LISTED=$(grep -c LISTED "$LOGTEMP")
+		TOTALEST=$(echo $LISTED + $GREYLIST | bc)
+
+		#Calcula a quantidade de consultas DNSBL por tipo de resposta
+		#127.0.0.2 - Rejeitada por má reputação
+		#127.0.0.3 - Rejeitada por suspeita/problemas na identificação
+		#NXDOMAIN - Aceita por não estar listada
+		DNSBLBLOCK=$(egrep -c "A .* => [0-9]+ 127.0.0.2" "$LOGFILE")
+		DNSBLSPAM=$(egrep -c "A .* => [0-9]+ 127.0.0.3" "$LOGFILE")
+		DNSBLOK=$(egrep -c "A .* => [0-9]+ NXDOMAIN" "$LOGFILE")
+		TOTALESDNSBL=$(echo $DNSBLBLOCK + $DNSBLSPAM + $DNSBLOK | bc)
+
 		if [[ $TOTALEST != 0 ]]; then
 			echo ''
 			echo '=========================='
