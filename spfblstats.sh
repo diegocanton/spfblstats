@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- coding: utf-8 -*-
 export PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin
-version="2.11 alfa - 2017-02-07_22:33"
+version="2.11 alfa - 2017-02-09_01:12"
 
 function head(){
 
@@ -57,6 +57,7 @@ case $1 in
 	}
 
 	executaStats(){
+		#Calcula a quantidade de mensagens por resposta - Ações permanentes
 		BLOCKED=$(grep -c BLOCKED "$LOGTEMP")
 		FAIL=$(grep -c ' FAIL' "$LOGTEMP")
 		FLAG=$(grep -c FLAG "$LOGTEMP")
@@ -73,15 +74,21 @@ case $1 in
 		SPAMTRAP=$(grep -c SPAMTRAP "$LOGTEMP")
 		INEXISTENT=$(grep -c INEXISTENT "$LOGTEMP")
 		TIMEOUT=$(grep -c TIMEOUT "$LOGTEMP")
-
+		
+		#Calcula os totais da sessão permanente
 		TOTALES=$(echo $WHITE + $BLOCKED + $FLAG + $HOLD + $NXDOMAIN + $NXSENDER + $PASS + $TIMEOUT + $NONE + $SOFTFAIL + $NEUTRAL + $INTERRUPTED + $SPAMTRAP + $INEXISTENT + $INVALID + $FAIL | bc)
 		BLOCKTOTAL=$( echo $BLOCKED + $FLAG + $HOLD + $NXDOMAIN + $NXSENDER + $TIMEOUT + $NONE + $SOFTFAIL + $NEUTRAL + $INTERRUPTED + $SPAMTRAP + $INEXISTENT + $INVALID + $FAIL | bc)
 		PASSTOTAL=$( echo $WHITE + $PASS | bc)
 
-		GREYLIST=$(grep -c GREYLIST "$LOGTEMP")
+		#Calcula a quantidade e total de mensagens para resultados de checagem com ações temporarias
+		GREYLIST=$(grep -c GREYLIST "$LOGTEMP")		
 		LISTED=$(grep -c LISTED "$LOGTEMP")
 		TOTALEST=$(echo $LISTED + $GREYLIST | bc)
 
+		#Calcula a quantidade de consultas DNSBL por tipo de resposta
+		#127.0.0.2 - Rejeitada por má reputação
+		#127.0.0.3 - Rejeitada por suspeita/problemas na identificação
+		#NXDOMAIN - Aceita por não estar listada
 		DNSBLBLOCK=$(egrep -c "A .* => [0-9]+ 127.0.0.2" "$LOGFILE")
 		DNSBLSPAM=$(egrep -c "A .* => [0-9]+ 127.0.0.3" "$LOGFILE")
 		DNSBLOK=$(egrep -c "A .* => [0-9]+ NXDOMAIN" "$LOGFILE")
