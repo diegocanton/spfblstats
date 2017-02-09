@@ -153,27 +153,18 @@ case $1 in
 			echo '   TIMEOUT:' $(echo "scale=0;($TIMEOUT*100) / $TOTALES" | bc)'% - '"$TIMEOUT"
 		fi
 
-		echo '  ----------------------'
-		echo '   ALL BLOCKED :' $(echo "scale=0;($BLOCKTOTAL*100) / $TOTALES" | bc)'% - '"$BLOCKTOTAL"
-		echo '   ALL ACCEPTED:' $(echo "scale=0;($PASSTOTAL*100) / $TOTALES" | bc)'% - '"$PASSTOTAL"
-		echo '   ALL =TOTAL= :' $(echo "scale=0;($TOTALES*100) / $TOTALES" | bc)'% - '"$TOTALES"
+		echo ' -----------------------'
+		echo ' ALL BLOCKED :' $(echo "scale=0;($BLOCKTOTAL*100) / $TOTALES" | bc)'% - '"$BLOCKTOTAL"
+		echo ' ALL ACCEPTED:' $(echo "scale=0;($PASSTOTAL*100) / $TOTALES" | bc)'% - '"$PASSTOTAL"
+		echo '    TOTAL   :' $(echo "scale=0;($TOTALES*100) / $TOTALES" | bc)'% - '"$TOTALES"
 		echo '=========================='
 	}
 
-	executaStatsExtra(){
+	executaStatsTemp(){
 		#Calcula a quantidade e total de mensagens para resultados de checagem com ações temporarias
 		GREYLIST=$(grep -c GREYLIST "$LOGTEMP")		
 		LISTED=$(grep -c LISTED "$LOGTEMP")
 		TOTALEST=$(echo $LISTED + $GREYLIST | bc)
-
-		#Calcula a quantidade de consultas DNSBL por tipo de resposta
-		#127.0.0.2 - Rejeitada por má reputação
-		#127.0.0.3 - Rejeitada por suspeita/problemas na identificação
-		#NXDOMAIN - Aceita por não estar listada
-		DNSBLBLOCK=$(egrep -c "A .* => [0-9]+ 127.0.0.2" "$LOGFILE")
-		DNSBLSPAM=$(egrep -c "A .* => [0-9]+ 127.0.0.3" "$LOGFILE")
-		DNSBLOK=$(egrep -c "A .* => [0-9]+ NXDOMAIN" "$LOGFILE")
-		TOTALESDNSBL=$(echo $DNSBLBLOCK + $DNSBLSPAM + $DNSBLOK | bc)
 
 		if [[ $TOTALEST != 0 ]]; then
 			echo ''
@@ -185,6 +176,20 @@ case $1 in
 			echo '  ----------------------'
 			echo '     TOTAL: ' $(echo "scale=0;($TOTALEST*100) / $TOTALEST" | bc)'% - '"$TOTALEST"
 			echo '=========================='
+		fi
+	}
+
+	executaStatsDNSBL(){
+		#Calcula a quantidade de consultas DNSBL por tipo de resposta
+		#127.0.0.2 - Rejeitada por má reputação
+		#127.0.0.3 - Rejeitada por suspeita/problemas na identificação
+		#NXDOMAIN - Aceita por não estar listada
+		DNSBLBLOCK=$(egrep -c "A .* => [0-9]+ 127.0.0.2" "$LOGFILE")
+		DNSBLSPAM=$(egrep -c "A .* => [0-9]+ 127.0.0.3" "$LOGFILE")
+		DNSBLOK=$(egrep -c "A .* => [0-9]+ NXDOMAIN" "$LOGFILE")
+		TOTALESDNSBL=$(echo $DNSBLBLOCK + $DNSBLSPAM + $DNSBLOK | bc)
+
+		if [[ $TOTALESDNSBL != 0 ]]; then
 			echo ''
 			echo '=========================='
 			echo ' Permanent: ' $(echo "scale=0; ($TOTALES*100) / ($TOTALES + $TOTALEST)" | bc)'% - '"$TOTALES"
@@ -200,10 +205,6 @@ case $1 in
 			echo '     BLOCK: ' $(echo "scale=0; ($DNSBLBLOCK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLBLOCK"
 			echo '     TOTAL: ' $(echo "scale=0;($TOTALESDNSBL*100) / $TOTALESDNSBL" | bc)'% - '"$TOTALESDNSBL"
 			echo '=========================='
-		else
-			echo ''
-			echo -e "\e[41m Variabile TOTALEST returned zero as value! \e[0m";
-			echo ''
 		fi
 	}
 
@@ -214,7 +215,8 @@ case $1 in
 	verificaLogTempDns   # apaga temporarios
 	criaLogTemp
 	executaStats
-	executaStatsExtra
+	executaStatsTemp
+	executaStatsDNSBL
 	verificaLogTemp      # apaga temporarios
 	verificaLogTempDns   # apaga temporarios
 	exit 0
