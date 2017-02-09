@@ -82,9 +82,10 @@ case $1 in
 		LISTED=$(grep -c LISTED "$LOGTEMP")
 		TOTALEST=$(echo $LISTED + $GREYLIST | bc)
 
-		DNSBLBLOCK=$(egrep -c "TXT .* => 86400 http://" "$LOGFILE")
-		DNSBLOK=$(egrep -c "A .* => 3600 NXDOMAIN" "$LOGFILE")
-		TOTALESDNSBL=$(echo $DNSBLBLOCK + $DNSBLOK | bc)
+		DNSBLBLOCK=$(egrep -c "A .* => [0-9]+ 127.0.0.2" "$LOGFILE")
+		DNSBLSPAM=$(egrep -c "A .* => [0-9]+ 127.0.0.3" "$LOGFILE")
+		DNSBLOK=$(egrep -c "A .* => [0-9]+ NXDOMAIN" "$LOGFILE")
+		TOTALESDNSBL=$(echo $DNSBLBLOCK + $DNSBLSPAM + $DNSBLOK | bc)
 
 		clear
 
@@ -188,6 +189,7 @@ case $1 in
 			echo '=      DNSBL BLOCKs      ='
 			echo '=========================='
 			echo '        OK: ' $(echo "scale=0; ($DNSBLOK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLOK"
+			echo 'SUSPICIOUS: ' $(echo "scale=0; ($DNSBLSPAM*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLSPAM"
 			echo '     BLOCK: ' $(echo "scale=0; ($DNSBLBLOCK*100) / $TOTALESDNSBL" | bc)'% - '"$DNSBLBLOCK"
 			echo '     TOTAL: ' $(echo "scale=0;($TOTALESDNSBL*100) / $TOTALESDNSBL" | bc)'% - '"$TOTALESDNSBL"
 			echo '=========================='
