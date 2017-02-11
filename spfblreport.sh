@@ -82,7 +82,7 @@ case $1 in
 		#127.0.0.2 - Rejeitada por má reputação
 		#127.0.0.3 - Rejeitada por suspeita/problemas na identificação
 		#NXDOMAIN - Aceita por não estar listada
-
+		printf "Nada ainda"
 	}
 
 	# Executa processos
