@@ -49,32 +49,32 @@ case $1 in
 
 	executaReportIp(){
 		#Gera Report
-		egrep "SPFTCP[0-9]+ SPFBL" /var/log/spfbl/$LOGTEMP | grep $4 | awk -F" " '{print $9}' | sort | uniq -c | sort -n
+		grep $4 $LOGTEMP | awk -F" " '{print $9}' | sort | uniq -c | sort -n
 	}
 	
-	executaReportSender(){
+	executaReportSender(){	
 		#Gera Report
-		egrep "SPFTCP[0-9]+ SPFBL" /var/log/spfbl/$LOGTEMP | grep $4 | awk -F" " '{print $10}' | sort | uniq -c | sort -n
+		grep $4 $LOGTEMP | awk -F" " '{print $10}' | sort | uniq -c | sort -n
 	}
 	
 	executaReportHelo(){
 		#Gera Report
-		egrep "SPFTCP[0-9]+ SPFBL" /var/log/spfbl/$LOGTEMP | grep $4 | awk -F" " '{print $11}' | sort | uniq -c | sort -n
+		grep $4 $LOGTEMP | awk -F" " '{print $11}' | sort | uniq -c | sort -n
 	}
 
 	executaReportDest(){
 		#Gera Report
-		egrep "SPFTCP[0-9]+ SPFBL" /var/log/spfbl/$LOGTEMP | grep $4 | awk -F" " '{print $12}' | sort | uniq -c | sort -n
+		grep $4 $LOGTEMP | awk -F" " '{print $12}' | sort | uniq -c | sort -n
 	}
 	
 	executaReportServer(){
 		#Gera Report
-		egrep "SPFTCP[0-9]+ SPFBL" /var/log/spfbl/$LOGTEMP | grep $4 | awk -F" " '{print $5  $6}' | sort | uniq -c | sort -n
+		grep $4 $LOGTEMP | awk -F" " '{print $5  $6}' | sort | uniq -c | sort -n
 	}
 	
 	executaReportUser(){
 		#Gera Report
-		egrep "SPFTCP[0-9]+ SPFBL" /var/log/spfbl/$LOGTEMP | grep $4 | awk -F" " '{print $7}' | sort | uniq -c | sort -n
+		grep $4 $LOGTEMP | awk -F" " '{print $7}' | sort | uniq -c | sort -n
 	}
 	
 	executaReportDNSBL(){
