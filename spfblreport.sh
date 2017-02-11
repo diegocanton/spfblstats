@@ -122,7 +122,7 @@ case $1 in
 		executaReportUser
 		;;
 	*)
-		printf "ERRO DE SINTAXE"
+		printf "ERRO DE SINTAXE."
 		;;
 	esac
 
