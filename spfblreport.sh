@@ -10,13 +10,13 @@ function head(){
 
 case $1 in
 'report')
-	
+
 	if [[ $2 =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
 		TODAY=$2
 	else
 		TODAY=`date +%Y-%m-%d`
 	fi
-	
+
 	filter=$4
 
 	LOGFILE=/var/log/spfbl/spfbl."$TODAY".log
@@ -49,42 +49,46 @@ case $1 in
 		egrep " DNSUDP[0-9]+ DNSBL " $LOGFILE > $LOGTEMPDNS
 	}
 
+	REPORTDEST=`egrep -c $filter $LOGTEMP`
+	testaReport(){
+		if [[ "$REPORTDEST" -eq 0 ]]; then
+			echo "";
+			echo -e "\e[41m No records found. \e[0m";
+			echo "";
+			exit 0;
+		fi
+	}
+
 	executaReportIp(){
-		#Gera Report
 		egrep $filter $LOGTEMP | awk -F" " '{print $9}' | sort | uniq -c | sort -n | tail -30
 	}
-	
-	executaReportSender(){	
-		#Gera Report
+
+	executaReportSender(){
 		egrep $filter $LOGTEMP | awk -F" " '{print $10}' | sort | uniq -c | sort -n | tail -30
 	}
-	
+
 	executaReportHelo(){
-		#Gera Report
 		egrep $filter $LOGTEMP | awk -F" " '{print $11}' | sort | uniq -c | sort -n | tail -30
 	}
 
 	executaReportDest(){
-		#Gera Report
 		egrep $filter $LOGTEMP | awk -F" " '{print $12}' | sort | uniq -c | sort -n | tail -30
 	}
-	
+
 	executaReportServer(){
-		#Gera Report
 		egrep $filter $LOGTEMP | awk -F" " '{print $5  $6}' | sort | uniq -c | sort -n | tail -30
 	}
-	
+
 	executaReportUser(){
-		#Gera Report
 		egrep $filter $LOGTEMP | awk -F" " '{print $7}' | sort | uniq -c | sort -n | tail -30
 	}
-	
+
 	executaReportDNSBL(){
 		#Calcula a quantidade de consultas DNSBL por tipo de resposta
 		#127.0.0.2 - Rejeitada por má reputação
 		#127.0.0.3 - Rejeitada por suspeita/problemas na identificação
 		#NXDOMAIN - Aceita por não estar listada
-		printf "Nada ainda"
+		printf "No records found."
 	}
 
 	# Executa processos
@@ -92,12 +96,12 @@ case $1 in
 	verificaLogTemp      # apaga temporarios
 	verificaLogTempDns   # apaga temporarios
 	criaLogTemp
-	
+	testaReport
+
 	#EXEMPLO LOG
 	#2017-02-10T21:44:06.994-0200 00020 SPFTCP002 SPFBL <SERVER_IP> <SERVER_NAME> <MAIL_USER>: SPF <SENDER_IP> <SENDER_MAIL> <SENDER_HELO> <DEST_MAIL> => <ERROR> <TICKET>
 	#2017-02-10T20:25:48.431-0200 00001 DNSUDP002 DNSBL <DNS_SERVER_REQUESTER> NXDOMAIN: <QUERY_TYPE> aaa.bbb.ccc.ddd.dnsbl.domain.tld. => 86400 <result>
 
-	
 	case $3 in
 	'ip')
 		# EXEC $9
@@ -124,7 +128,10 @@ case $1 in
 		executaReportUser
 		;;
 	*)
-		printf "ERRO DE SINTAXE."
+		echo "";
+		echo -e "\e[41m Syntax error at: $3. \e[0m";
+		echo "";
+		exit 0
 		;;
 	esac
 
