@@ -49,32 +49,32 @@ case $1 in
 
 	executaReportIp(){
 		#Gera Report
-		egrep "$4" $LOGTEMP | awk -F" " '{print $9}' | sort | uniq -c | sort -n | tail -50
+		egrep $4 $LOGTEMP | awk -F" " '{print $9}' | sort | uniq -c | sort -n | tail -50
 	}
 	
 	executaReportSender(){	
 		#Gera Report
-		egrep "$4" $LOGTEMP | awk -F" " '{print $10}' | sort | uniq -c | sort -n | tail -50
+		egrep $4 $LOGTEMP | awk -F" " '{print $10}' | sort | uniq -c | sort -n | tail -50
 	}
 	
 	executaReportHelo(){
 		#Gera Report
-		egrep "$4" $LOGTEMP | awk -F" " '{print $11}' | sort | uniq -c | sort -n | tail -50
+		egrep $4 $LOGTEMP | awk -F" " '{print $11}' | sort | uniq -c | sort -n | tail -50
 	}
 
 	executaReportDest(){
 		#Gera Report
-		egrep "$4" $LOGTEMP | awk -F" " '{print $12}' | sort | uniq -c | sort -n | tail -50
+		egrep $4 $LOGTEMP | awk -F" " '{print $12}' | sort | uniq -c | sort -n | tail -50
 	}
 	
 	executaReportServer(){
 		#Gera Report
-		egrep "$4" $LOGTEMP | awk -F" " '{print $5  $6}' | sort | uniq -c | sort -n | tail -50
+		egrep $4 $LOGTEMP | awk -F" " '{print $5  $6}' | sort | uniq -c | sort -n | tail -50
 	}
 	
 	executaReportUser(){
 		#Gera Report
-		egrep "$4" $LOGTEMP | awk -F" " '{print $7}' | sort | uniq -c | sort -n | tail -50
+		egrep $4 $LOGTEMP | awk -F" " '{print $7}' | sort | uniq -c | sort -n | tail -50
 	}
 	
 	executaReportDNSBL(){
