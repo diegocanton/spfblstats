@@ -49,32 +49,32 @@ case $1 in
 
 	executaReportIp(){
 		#Gera Report
-		grep $4 $LOGTEMP | awk -F" " '{print $9}' | sort | uniq -c | sort -n
+		grep "$4" $LOGTEMP | awk -F" " '{print $9}' | sort | uniq -c | sort -n
 	}
 	
 	executaReportSender(){	
 		#Gera Report
-		grep $4 $LOGTEMP | awk -F" " '{print $10}' | sort | uniq -c | sort -n
+		grep "$4" $LOGTEMP | awk -F" " '{print $10}' | sort | uniq -c | sort -n
 	}
 	
 	executaReportHelo(){
 		#Gera Report
-		grep $4 $LOGTEMP | awk -F" " '{print $11}' | sort | uniq -c | sort -n
+		grep "$4" $LOGTEMP | awk -F" " '{print $11}' | sort | uniq -c | sort -n
 	}
 
 	executaReportDest(){
 		#Gera Report
-		grep $4 $LOGTEMP | awk -F" " '{print $12}' | sort | uniq -c | sort -n
+		grep "$4" $LOGTEMP | awk -F" " '{print $12}' | sort | uniq -c | sort -n
 	}
 	
 	executaReportServer(){
 		#Gera Report
-		grep $4 $LOGTEMP | awk -F" " '{print $5  $6}' | sort | uniq -c | sort -n
+		grep "$4" $LOGTEMP | awk -F" " '{print $5  $6}' | sort | uniq -c | sort -n
 	}
 	
 	executaReportUser(){
 		#Gera Report
-		grep $4 $LOGTEMP | awk -F" " '{print $7}' | sort | uniq -c | sort -n
+		grep "$4" $LOGTEMP | awk -F" " '{print $7}' | sort | uniq -c | sort -n
 	}
 	
 	executaReportDNSBL(){
