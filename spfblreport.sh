@@ -59,7 +59,7 @@ case $1 in
 	
 	executaReportHelo(){
 		#Gera Report
-		grep "$4" $LOGTEMP | awk -F" " '{print $11}' | sort | uniq -c | sort -n
+		grep "$4" $LOGTEMP | awk -F" " '{print $11}' | sort | uniq -c | sort -n | tail -25
 	}
 
 	executaReportDest(){
