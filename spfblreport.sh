@@ -82,11 +82,19 @@ case $1 in
 	}
 
 	executaReportServer(){
-		egrep $filter $LOGTEMP | awk -F" " '{print $5  $6}' | sort | uniq -c | sort -n | tail -30
+		egrep $filter $LOGTEMP | awk -F" " '{print $5 ' ' $6}' | sort | uniq -c | sort -n | tail -30
 	}
 
 	executaReportUser(){
 		egrep $filter $LOGTEMP | awk -F" " '{print $7}' | sort | uniq -c | sort -n | tail -30
+	}
+	executaReportAll(){
+		executaReportIp
+		executaReportSender
+		executaReportHelo
+		executaReportDest
+		executaReportServer
+		executaReportUser
 	}
 
 	executaReportDNSBL(){
@@ -132,6 +140,10 @@ case $1 in
 	'user')
 		#EXEC $7
 		executaReportUser
+		;;
+	'all')
+		#EXEC $7
+		executaReportAll
 		;;
 	*)
 		echo "";
