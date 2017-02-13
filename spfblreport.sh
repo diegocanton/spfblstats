@@ -82,7 +82,7 @@ case $1 in
 	}
 
 	executaReportServer(){
-		egrep $filter $LOGTEMP | awk -F" " '{print $5 ' ' $6}' | sort | uniq -c | sort -n | tail -30
+		egrep $filter $LOGTEMP | awk -F" " '{print "$5 $6"}' | sort | uniq -c | sort -n | tail -30
 	}
 
 	executaReportUser(){
