@@ -10,4 +10,4 @@ cat tmp5 | awk -F" " '{print $2}' > tmp6
 awk '{print "spfbl.sh superblock overlap "$0".0/24"}' tmp6 > tmp7
 bash tmp7
 #cat tmp7
-#rm tmp*
+rm tmp*
