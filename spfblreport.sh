@@ -46,10 +46,13 @@ case $1 in
 
 	criaLogTemp(){
 		egrep " SPFTCP[0-9]+ SPFBL " $LOGFILE > $LOGTEMP
+		sleep 3
 		egrep " DNSUDP[0-9]+ DNSBL " $LOGFILE > $LOGTEMPDNS
+		sleep 3
 	}
 
 	REPORTDEST=`egrep -c $filter $LOGTEMP`
+	sleep 2
 	testaReport(){
 		if [[ "$REPORTDEST" -eq 0 ]]; then
 			echo "";
