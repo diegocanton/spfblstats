@@ -24,6 +24,7 @@ case $1 in
 	LOGTEMPDNS=/tmp/spfblreportdns
 
 	verificaLogFile(){
+		echo " Verificando Dados LOG"
 		if [[ ! -f "$LOGFILE" ]]; then
 			echo "";
 			echo -e "\e[41m The file $LOGFILE was not found in your system! \e[0m";
@@ -54,9 +55,8 @@ case $1 in
 		sleep 3
 	}
 
-	REPORTDEST=`egrep -c $filter $LOGTEMP`
-	sleep 2
 	testaReport(){
+		REPORTDEST=`egrep -c $filter $LOGTEMP`
 		if [[ "$REPORTDEST" -eq 0 ]]; then
 			echo "";
 			echo -e "\e[41m No records found. \e[0m";
