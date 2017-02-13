@@ -33,12 +33,14 @@ case $1 in
 	}
 
 	verificaLogTemp(){
+		echo " Verificando Dados SPFBL"
 		if [[ -f "$LOGTEMP" ]]; then
 			rm "$LOGTEMP"
 		fi
 	}
 
 	verificaLogTempDns(){
+		echo " Verificando Dados DNSBL"
 		if [[ -f "$LOGTEMPDNS" ]]; then
 			rm "$LOGTEMPDNS"
 		fi
@@ -46,8 +48,9 @@ case $1 in
 
 	criaLogTemp(){
 		egrep " SPFTCP[0-9]+ SPFBL " $LOGFILE > $LOGTEMP
-		sleep 3
+		echo " Separando Dados SPFBL"
 		egrep " DNSUDP[0-9]+ DNSBL " $LOGFILE > $LOGTEMPDNS
+		echo " Separando Dados DNSBL"
 		sleep 3
 	}
 
@@ -138,8 +141,8 @@ case $1 in
 		;;
 	esac
 
-	verificaLogTemp      # apaga temporarios
-	verificaLogTempDns   # apaga temporarios
+	#verificaLogTemp      # apaga temporarios
+	#verificaLogTempDns   # apaga temporarios
 	exit 0
 
 	# Fim processos
