@@ -96,8 +96,8 @@ case $1 in
 	}
 	executaReportAll(){
 		executaReportIp
-		executaReportSender
 		executaReportHelo
+		executaReportSender
 		executaReportDest
 		executaReportServer
 		executaReportUser
