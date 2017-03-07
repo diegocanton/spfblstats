@@ -156,7 +156,7 @@ case $1 in
 		echo ' -----------------------'
 		echo ' ALL BLOCKED :' $(echo "scale=0;($BLOCKTOTAL*100) / $TOTALES" | bc)'% - '"$BLOCKTOTAL"
 		echo ' ALL ACCEPTED:' $(echo "scale=0;($PASSTOTAL*100) / $TOTALES" | bc)'% - '"$PASSTOTAL"
-		echo '   SUSPICIOUS: ' $(echo "scale=0;($FLAG*100) / $TOTALEST" | bc)'% - '"$FLAG"
+		echo '   SUSPICIOUS: ' $(echo "scale=0;($FLAG*100) / $TOTALES" | bc)'% - '"$FLAG"
 		echo '    TOTAL   :' $(echo "scale=0;($TOTALES*100) / $TOTALES" | bc)'% - '"$TOTALES"
 		echo '=========================='
 	}
