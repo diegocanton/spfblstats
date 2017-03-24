@@ -67,32 +67,32 @@ case $1 in
 
 	executaReportIp(){
 		echo "----------------- LIST SERC IP - FILTRO: $filter ------------------"
-		egrep $filter $LOGTEMP | awk -F" " '{print $9}' | sort | uniq -c | sort -n | tail -30
+		egrep $filter $LOGTEMP | awk -F" " '{print $9}' | sort | uniq -c | sort -n | tail -40
 	}
 
 	executaReportSender(){
 		echo "--------------- LIST SRC SENDER - FILTRO: $filter -----------------"
-		egrep $filter $LOGTEMP | awk -F" " '{print $10}' | sort | uniq -c | sort -n | tail -30
+		egrep $filter $LOGTEMP | awk -F" " '{print $10}' | sort | uniq -c | sort -n | tail -40
 	}
 
 	executaReportHelo(){
 		echo "----------------- LIST SRC HELO - FILTRO: $filter -----------------"
-		egrep $filter $LOGTEMP | awk -F" " '{print $11}' | sort | uniq -c | sort -n | tail -30
+		egrep $filter $LOGTEMP | awk -F" " '{print $11}' | sort | uniq -c | sort -n | tail -40
 	}
 
 	executaReportDest(){
 		echo "---------------- LIST DEST MAIL - FILTRO: $filter ----------------"
-		egrep $filter $LOGTEMP | awk -F" " '{print $12}' | sort | uniq -c | sort -n | tail -30
+		egrep $filter $LOGTEMP | awk -F" " '{print $12}' | sort | uniq -c | sort -n | tail -40
 	}
 
 	executaReportServer(){
 		echo "--------------- LIST DEST SERVER - FILTRO: $filter ---------------"
-		egrep $filter $LOGTEMP | awk -F" " '{print $5 " " $6}' | sort | uniq -c | sort -n | tail -30
+		egrep $filter $LOGTEMP | awk -F" " '{print $5 " " $6}' | sort | uniq -c | sort -n | tail -40
 	}
 
 	executaReportUser(){
 		echo "--------------- LIST USER SERVER - FILTRO: $filter ---------------"
-		egrep $filter $LOGTEMP | awk -F" " '{print $7}' | sort | uniq -c | sort -n | tail -30
+		egrep $filter $LOGTEMP | awk -F" " '{print $7}' | sort | uniq -c | sort -n | tail -40
 	}
 	executaReportAll(){
 		executaReportIp
