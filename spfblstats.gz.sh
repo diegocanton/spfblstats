@@ -27,15 +27,21 @@ case $1 in
 	fi
 
 	LOGFILE=/var/log/spfbl/spfbl."$TODAY".log
+	LOGFILEGZ=/var/log/spfbl/spfbl."$TODAY".log.*gz
 	LOGTEMP=/tmp/spfblstats
 	LOGTEMPDNS=/tmp/spfblstatsdns
 
 	verificaLogFile(){
-		if [[ ! -f "$LOGFILE" ]]; then
-			echo "";
-			echo -e "\e[41m The file $LOGFILE was not found in your system! \e[0m";
-			echo "";
-			exit 1
+		if [[ ! -f "$LOGFILEGZ" ]]; then
+			if [[ ! -f "$LOGFILE" ]]; then
+				echo "";
+				echo -e "\e[41m The file $LOGFILE was not found in your system! \e[0m";
+				echo "";
+				exit 1
+			fi
+		fi
+		if [[ -f "$LOGFILEGZ" ]]; then
+			LOGFILE=$LOGFILEGZ
 		fi
 	}
 
